@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Pick the commit range the CI commit gates read.
 
     python scripts/checks/pick_range.py EVENT --pr-base SHA --pr-head SHA \
@@ -66,14 +65,14 @@ def pick_range(
     return "", "No commit range for this run; the range gates are skipped."
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("event")
     parser.add_argument("--pr-base", default="")
     parser.add_argument("--pr-head", default="")
     parser.add_argument("--before", default="")
     parser.add_argument("--sha", default="")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     rev_range, notice = pick_range(args.event, args.pr_base, args.pr_head, args.before, args.sha)
     if notice:
         sys.stderr.write(f"::notice::{notice}\n")

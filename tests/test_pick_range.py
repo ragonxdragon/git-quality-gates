@@ -118,3 +118,12 @@ def test_cli_prints_the_range(repo):
         check=True,
     )
     assert out.stdout.strip() == f"{before}..{sha}"
+
+
+def test_cli_passes_its_arguments_to_pick_range(capsys):
+    from git_quality_gates import cli
+
+    assert cli.main(["pick-range", "workflow_dispatch"]) == 0
+    out = capsys.readouterr()
+    assert out.out == "\n"
+    assert "skipped" in out.err
