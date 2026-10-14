@@ -1,7 +1,7 @@
 # Hooks for the pre-commit framework (https://pre-commit.com). Add to a repository:
 #
 #   repos:
-#     - repo: https://github.com/johnragonhall/git-quality-gates
+#     - repo: https://github.com/ragonxdragon/git-quality-gates
 #       rev: v0.1.0
 #       hooks:
 #         - id: commit-message

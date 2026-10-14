@@ -19,7 +19,7 @@ they read git diffs and commit messages, not syntax trees.
 ## Install
 
 ```sh
-uv tool install git+https://github.com/johnragonhall/git-quality-gates
+uv tool install git+https://github.com/ragonxdragon/git-quality-gates
 git-quality-gates init       # writes a commented .quality-gates.toml (optional)
 git-quality-gates install    # installs the git hooks into this clone
 ```
@@ -39,7 +39,7 @@ The repository ships a `.pre-commit-hooks.yaml`. Add it to your `.pre-commit-con
 
 ```yaml
 repos:
-  - repo: https://github.com/johnragonhall/git-quality-gates
+  - repo: https://github.com/ragonxdragon/git-quality-gates
     rev: v0.1.0
     hooks:
       - id: commit-message
@@ -213,7 +213,7 @@ history on every push and pull request, after lint and tests. Copy it as a start
   with:
     fetch-depth: 0   # the range gates refuse a shallow clone
 - uses: astral-sh/setup-uv@<sha>
-- run: uv tool install git+https://github.com/johnragonhall/git-quality-gates
+- run: uv tool install git+https://github.com/ragonxdragon/git-quality-gates
 - run: |
     range=$(git-quality-gates pick-range "$EVENT" --pr-base "$PR_BASE" --pr-head "$PR_HEAD" --before "$BEFORE" --sha "$SHA")
     if [ -n "$range" ]; then
