@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Flag British spellings and common writing faults in Markdown prose and source comments.
 
 Why this exists: a document set written in American English drifts without anyone

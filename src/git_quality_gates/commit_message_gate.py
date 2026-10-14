@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Commit-message gate: every commit since the last release tag parses as conventional.
 
     git-quality-gates commit-messages               since the last v* tag

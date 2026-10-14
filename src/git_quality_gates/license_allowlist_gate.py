@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """License allowlist gate: every vendored library is under an accepted license.
 
     git-quality-gates license [--root DIR]

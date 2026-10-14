@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Regression-test gate: a fix that changes guarded source ships with a test.
 
     git-quality-gates regression --staged .git/COMMIT_EDITMSG

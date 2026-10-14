@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Writing-standard gate: block new dashes, curly quotes, emoji, AI vocabulary and attribution.
 
     git-quality-gates writing                 staged changes

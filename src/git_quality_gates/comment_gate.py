@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Comment gate: a comment describes what the code does now, not its past.
 
     git-quality-gates comment                 staged changes
