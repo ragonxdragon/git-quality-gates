@@ -1,0 +1,69 @@
+# .quality-gates.toml: settings for git-quality-gates.
+# Every key is optional. The values shown are the defaults.
+
+[gates]
+# Gates to switch off for this repository. Names: commit-message, attribution,
+# regression-test, comment, writing, prose, license.
+disabled = []
+
+[paths]
+# Path prefixes no content gate reads.
+exclude = ["vendor/", "third_party/", "node_modules/", ".git/", ".venv/", "dist/", "build/"]
+
+[commit_message]
+# Allowed Conventional Commit types.
+types = ["feat", "fix", "perf", "refactor", "revert", "security", "docs", "chore", "style", "test", "ci", "build"]
+# Case-insensitive regular expressions matched against each message line, in addition
+# to the built-in AI-attribution patterns.
+extra_attribution_patterns = []
+
+[regression_test]
+# A commit of these types that touches a guarded path must also touch a test.
+fix_types = ["fix"]
+guarded_prefixes = ["src/"]
+test_globs = [
+  "test/**", "tests/**", "**/test_*.py", "**/*_test.py", "**/*_test.go",
+  "**/*.test.*", "**/*.spec.*", "**/test-*.sh",
+]
+# Minimum length of the reason in a "No-test: <reason>" trailer.
+min_reason_chars = 20
+
+[writing]
+# Words to reject in addition to the built-in list (plain words, matched whole).
+extra_vocabulary = []
+
+[prose]
+# Directories whose source comments are spell-checked. Empty means every tracked file.
+source_roots = []
+# Term fixes, for example { WiFi = "Wi-Fi" }.
+terms = {}
+
+[license]
+# Each directory directly under these is one vendored library.
+vendor_dirs = ["vendor", "third_party"]
+allowed = ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Zlib"]
+banned_prefixes = ["GPL", "AGPL"]
+lgpl_prefix = "LGPL"
+# A library with no license file and no manifest license, backed by a pattern in a file:
+#   [license.declared.mylib]
+#   license = "MIT"
+#   reason = "Single header; the MIT terms are in its comment block."
+#   evidence = { file = "mylib.h", pattern = "MIT License" }
+# An accepted exception to the policy:
+#   [[license.exceptions]]
+#   library = "somelib"
+#   license = "LGPL-3.0"
+#   reason = "Kept until a permissively licensed replacement lands."
+
+[changelog]
+# When true, the post-commit hook appends feat, fix, perf, refactor, revert and
+# security commits to the [Unreleased] section of the file and amends the commit.
+sync = false
+file = "CHANGELOG.md"
+# A docs, chore, style, test, ci or build commit touching these prefixes gets a note.
+product_paths = ["src/"]
+
+[hooks]
+# Commands run by pre-commit and pre-push, each split into arguments without a shell.
+pre_commit_commands = []
+pre_push_commands = []
