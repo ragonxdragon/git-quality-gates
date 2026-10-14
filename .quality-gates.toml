@@ -1,0 +1,7 @@
+# This repository checks itself with its own gates.
+
+[regression_test]
+guarded_prefixes = ["src/"]
+
+[prose]
+source_roots = ["src/", "tests/"]
