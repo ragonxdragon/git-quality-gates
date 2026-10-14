@@ -1,0 +1,14 @@
+#!/bin/sh
+# managed by git-quality-gates
+# prepare-commit-msg: remove AI-attribution lines before the message is stored, so a
+# tool that appends a trailer never reaches the commit-msg block. Everything else in
+# the message, including git's own comment lines, is kept.
+if [ -n "${GQG_CMD:-}" ]; then
+  # shellcheck disable=SC2086
+  run() { $GQG_CMD "$@"; }
+elif command -v git-quality-gates >/dev/null 2>&1; then
+  run() { git-quality-gates "$@"; }
+else
+  exit 0
+fi
+run prepare-commit-msg "$1"

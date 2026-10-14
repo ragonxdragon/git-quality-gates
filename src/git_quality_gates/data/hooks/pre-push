@@ -1,0 +1,15 @@
+#!/bin/sh
+# managed by git-quality-gates
+# pre-push: run the commands in [hooks].pre_push_commands (a whole-tree lint, for
+# example) and block the push if one fails. With none configured this does nothing.
+# Bypass with GQG_SKIP=pre-push (logged).
+if [ -n "${GQG_CMD:-}" ]; then
+  # shellcheck disable=SC2086
+  run() { $GQG_CMD "$@"; }
+elif command -v git-quality-gates >/dev/null 2>&1; then
+  run() { git-quality-gates "$@"; }
+else
+  echo "[quality-gates] git-quality-gates is not installed; pre-push skipped (CI is the backstop)." >&2
+  exit 0
+fi
+run pre-push

@@ -1,0 +1,15 @@
+#!/bin/sh
+# managed by git-quality-gates
+# pre-commit: run the content gates (writing standard, history comments, vendored
+# licenses, prose) on the staged changes, then the commands in [hooks].pre_commit_commands.
+# Bypass one gate with GQG_SKIP=<gate> (logged); skip every hook with --no-verify.
+if [ -n "${GQG_CMD:-}" ]; then
+  # shellcheck disable=SC2086
+  run() { $GQG_CMD "$@"; }
+elif command -v git-quality-gates >/dev/null 2>&1; then
+  run() { git-quality-gates "$@"; }
+else
+  echo "[quality-gates] git-quality-gates is not installed; pre-commit skipped (CI is the backstop)." >&2
+  exit 0
+fi
+run pre-commit

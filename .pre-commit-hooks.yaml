@@ -1,0 +1,41 @@
+# Hooks for the pre-commit framework (https://pre-commit.com). Add to a repository:
+#
+#   repos:
+#     - repo: https://github.com/johnragonhall/git-quality-gates
+#       rev: v0.1.0
+#       hooks:
+#         - id: commit-message
+#         - id: writing
+#         - id: comments
+#
+# The commit-message hook runs at the commit-msg stage, so install it with:
+#   pre-commit install --hook-type pre-commit --hook-type commit-msg
+- id: commit-message
+  name: commit message (Conventional Commits, no AI attribution, fix needs a test)
+  entry: git-quality-gates commit-msg
+  language: python
+  stages: [commit-msg]
+  always_run: true
+- id: writing
+  name: writing standard (added lines only)
+  entry: git-quality-gates writing
+  language: python
+  pass_filenames: false
+  always_run: true
+- id: comments
+  name: comments describe behavior, not history (added lines only)
+  entry: git-quality-gates comment
+  language: python
+  pass_filenames: false
+  always_run: true
+- id: license
+  name: vendored licenses against the allowlist
+  entry: git-quality-gates license
+  language: python
+  pass_filenames: false
+  files: ^(vendor|third_party)/|^\.quality-gates\.toml$
+- id: prose
+  name: prose spelling and wording
+  entry: git-quality-gates prose
+  language: python
+  types_or: [markdown]

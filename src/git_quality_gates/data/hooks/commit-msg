@@ -1,0 +1,16 @@
+#!/bin/sh
+# managed by git-quality-gates
+# commit-msg: check the message at the moment it is written. Blocks a subject that is
+# not a Conventional Commit, an AI-attribution trailer, and a fix that changes guarded
+# source without a test or a No-test reason.
+# Bypass with GQG_SKIP=commit-message (or attribution, regression-test); logged.
+if [ -n "${GQG_CMD:-}" ]; then
+  # shellcheck disable=SC2086
+  run() { $GQG_CMD "$@"; }
+elif command -v git-quality-gates >/dev/null 2>&1; then
+  run() { git-quality-gates "$@"; }
+else
+  echo "[quality-gates] git-quality-gates is not installed; commit-msg skipped (CI is the backstop)." >&2
+  exit 0
+fi
+run commit-msg "$1"

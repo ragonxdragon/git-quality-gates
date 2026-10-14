@@ -1,0 +1,67 @@
+#!/bin/sh
+# managed by git-quality-gates
+# post-commit: when [changelog].sync is true, append a bullet for a feat, fix, perf,
+# refactor, revert or security commit to the [Unreleased] section of the changelog and
+# amend the commit to include it. Types docs, chore, style, test, ci and build are
+# not recorded.
+#
+# This AMENDS the commit you just made, so enable it only where rewriting the local
+# HEAD is acceptable. Opt out for one commit with NO_CHANGELOG_SYNC=1.
+set -u
+[ -n "${CHANGELOG_SYNC:-}" ] && exit 0   # re-entry from the amend below
+[ -n "${NO_CHANGELOG_SYNC:-}" ] && exit 0
+if [ -n "${GQG_CMD:-}" ]; then
+  # shellcheck disable=SC2086
+  run() { $GQG_CMD "$@"; }
+elif command -v git-quality-gates >/dev/null 2>&1; then
+  run() { git-quality-gates "$@"; }
+else
+  exit 0
+fi
+[ "$(run config changelog.sync)" = "true" ] || exit 0
+root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+cd "$root" || exit 0
+file=$(run config changelog.file)
+[ -f "$file" ] || exit 0
+
+# Never rewrite history in the middle of a merge or rebase.
+git rev-parse -q --verify MERGE_HEAD >/dev/null 2>&1 && exit 0
+[ -d "$(git rev-parse --git-path rebase-merge 2>/dev/null)" ] && exit 0
+[ -d "$(git rev-parse --git-path rebase-apply 2>/dev/null)" ] && exit 0
+
+# Compare against the file as it stood a moment ago, not against HEAD. The changelog can
+# already be dirty for reasons of its own, and "dirty" would then read as "the script
+# added an entry" and fold unrelated edits into whatever commit happens to be next.
+_dirty_before=0
+git diff --quiet -- "$file" || _dirty_before=1
+_before=$(git hash-object "$file")
+run changelog --file "$file" || exit 0
+if [ "$(git hash-object "$file")" = "$_before" ]; then
+  # Nothing was added. That is correct for an internal change and wrong if the type was
+  # picked from the file touched rather than from what the change does. Say so, because
+  # a silent hook reads exactly like a successful one.
+  _subj=$(git log -1 --format=%s)
+  _type=${_subj%%:*}
+  _type=${_type%%(*}
+  case "$_type" in
+    docs|chore|style|test|ci|build)
+      echo "[changelog-sync] '$_type:' is not recorded in $file."
+      echo "[changelog-sync] Only feat, fix, perf, refactor, revert and security are."
+      echo "[changelog-sync] If this change is visible to users, re-type it: git commit --amend"
+      ;;
+  esac
+  exit 0
+fi
+
+if [ "$_dirty_before" -eq 1 ]; then
+  # git add stages the whole file, so folding it in would carry the edits already there.
+  echo "[changelog-sync] entry written to $file but NOT folded into this commit:"
+  echo "[changelog-sync] the file already had uncommitted edits. Commit it yourself."
+  exit 0
+fi
+
+git add "$file"
+# --only keeps the amend to the changelog. A bare amend rewrites HEAD from the whole
+# index, so a commit scoped with a pathspec would absorb every other staged file.
+CHANGELOG_SYNC=1 git commit --amend --no-edit --no-verify --only -- "$file" >/dev/null 2>&1
+echo "[changelog-sync] $file updated and folded into this commit."
